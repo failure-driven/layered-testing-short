@@ -1,49 +1,567 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+    <title>Failing for the right reasons</title>
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/white.css">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+    <style>
+        .fresho-logo img {
+            width: 80px;
+            border-style: none !important;
+            box-shadow: none !important;
+            margin: 0px 0px -30px !important;
+        }
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+        .fresho-logo span {
+            padding-left: 10px;
+        }
 
-		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
-		</script>
-	</body>
+        .twitter-avatar {
+            border-radius: 50px;
+            border: 1px solid #fff !important;
+            width: 80px !important;
+            margin: 0px 0px -30px !important;
+        }
+
+        .reveal .slides > section, .reveal .slides > section > section {
+            padding: 0px;
+        }
+
+        h4.code-snippet-title {
+            text-align: left;
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        .what-is-the-app-image-area {
+            width: 75%;
+            margin: auto !important;
+        }
+
+        .iterative-testing {
+            width: 50%;
+            margin: auto !important;
+        }
+
+        .failing-span {
+            background-color: #f2dede;
+            border-color: #ebcccc;
+            color: #a94442;
+            border-radius: .25rem;
+        }
+
+        .passing-span {
+            background-color: #dff0d8;
+            border-color: #d0e9c6;
+            color: #3c763d;
+            border-radius: .25rem;
+        }
+        .iteration-span {
+            background-color: #d9edf7;
+            border-color: #bcdff1;
+            color: #31708f;
+            border-radius: .25rem;
+        }
+        .reveal pre.code-100 {
+          width: 100%;
+        }
+    </style>
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+</head>
+<body>
+<div class="reveal">
+    <div class="slides">
+        <section>
+            <h1>Failing for the REACT reason</h1>
+            <h3>Selena Small & Michael Milewski</h3>
+            <aside class="notes" data-markdown>
+                - **SS** Hi I'm Selena
+                - and I'm Michael
+                - We work at Fresho!
+                - at Fresho! we're 100% focused on multi layer outside in BDD
+                - Sounds boring, right?
+                - Yeah, well it's not.
+                - Ok we've only got 10 minutes so let's make sure everyone knows what we mean by 100% MULTI-LAYER OUTSIDE-IN
+            </aside>
+        </section>
+
+        <!-- How Flows/Mechanics fit into testing -->
+        <section>
+            <img src="images/units/11-api-acceptance.jpg" width="600" height="600">
+            <aside class="notes" data-markdown>
+                - **MM** Here's an example of how a back end might look
+                - We have a number of tests around individual models, controllers, service objects
+                as well as integration tests around groups of these that work together
+                - At the outer layer of the backend, the complete API is treated as a unit, and is tested as such
+                - But we'll leave it at that 'cause we don't want to bore you with backend crap
+            </aside>
+        </section>
+
+        <section>
+            <img src="images/units/12-spa.jpg" width="600" height="600">
+            <aside class="notes" data-markdown>
+                - **MM** In this app, our frontend is a SPA - you all know what that is. A single page application
+                - Which as you know is made up of a number of components
+                - Now, we thought about writing this in Ember - like we do at Fresho! - but since we're at a React
+                meetup that didn't seem appropriate
+                - **SS** FYI we are React noobs - feel free to reach out and give us feedback
+            </aside>
+        </section>
+
+        <section>
+            <img src="images/units/13-fe-component.jpg" width="600" height="600">
+            <aside class="notes" data-markdown>
+                - **SS** So anyway, each frontend component will be tested in isolation
+                - Anyone have thoughts on isolated component tests in React?
+                - What about snapshot testing? Are there actually any benefits?
+            </aside>
+        </section>
+
+        <section>
+            <img src="images/units/SPA-mechanic.jpg" width="600" height="600">
+            <aside class="notes" data-markdown>
+                - **MM** Next, we move on to testing the users experience of the app.
+                - The example we're going to show you today is basically a flow through 3 pages.
+                - We want to test each of those pages individually
+                - If you imagine a multi step form wizard, we want to be able to test any one of
+                those steps in isolation from each other
+                - We call this style of integration test a Mechanic because it exercises
+                the "Mechanics" of the step we're testing
+            </aside>
+        </section>
+
+        <section>
+            <img src="images/units/SPA-flow.jpg" width="600" height="600">
+            <aside class="notes" data-markdown>
+                - **SS** Lastly, the outer-most layer of tests that we like to implement are what we call "Flows"
+                - Flows are just integration tests
+                - They test the flow-on effects as the user interacts between different pages or components
+                - As you can see here, this style of test tests the whole application
+                - Flows encapsulate user behaviour across the whole system: Back end, API and Front end!
+            </aside>
+        </section>
+
+        <section>
+            <h1>Flows</h1>
+
+            <aside class="notes" data-markdown>
+                - **MM** Every piece of code we write starts with a series of flows
+                - Awesome. Let's start writing some code
+            </aside>
+        </section>
+
+        <!-- # Submit a guess (Failing Flow) -->
+        <section>
+            <h3>Render images <span class="failing-span">Failing test</span></h3>
+            <pre><code data-trim data-noescape>
+                feature 'Game play lifecycle', js: true do
+                  context <mark> 'Game is setup with names of cute animals'</mark> do
+                    before do
+                      ["paddy melon", "beaver"].each do |phrase|
+                        Term.<mark>create(phrase: phrase)</mark>
+                      end
+
+                      scenario 'WINNING a game' do
+                      end
+                    end
+                  end
+                end
+            </code></pre>
+            <aside class="notes" data-markdown>
+                - **MM** We want to build a basic game to guess a search term which is used to find images from the internet
+                - To get started we've setup a flow using ruby's RSpec, capybara and selenium testing frameworks
+                - **➡** The first feature is a Game play lifecycle flow
+                - **➡** The context is: that we setup some initial state for our Game with names of cute animals
+                - **➡** And our first scenario is Winning the game
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="failing-span">Failing test</span></h3>
+            <pre><code data-trim data-noescape>
+                feature 'Game play lifecycle', js: true do
+                  context 'Game is setup with spooky terms' do
+                    before do ... end
+
+                    scenario 'WINNING a game' do
+                      When 'user starts the game' do
+                        visit('/')
+                        wait_for {
+                          <mark>focus_on(:welcome).text</mark>
+                        }.to eq('Welcome to the Game')
+                      end
+                    end
+                  end
+                end
+            </code></pre>
+            <aside class="notes" data-markdown>
+                - **SS** In the scenario 'winning the game', the first thing to assert is that we're on the right page!
+                - So, we visit the app and confirm we are there by checking the welcome message
+                - This is the first piece of code in the whole app!
+                - We have no controllers, models, views. No migrations. Nothing.
+                - The first piece of code is always a test.
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="failing-span">Failing test</span></h3>
+            <div class="iterative-testing">
+                <img src="images/iteration-1.1-home-empty.png" />
+            </div>
+            <aside class="notes" data-markdown>
+                - **MM** And when we run that test, what's going to happen?
+                - Well, it's going to fail! Of course
+                - As you can see we are on localhost:3000 and nothing is rendered
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="passing-span">Make it pass</span></h3>
+            <div class="iterative-testing">
+                <img src="images/iteration-1.2-welcome.png" />
+            </div>
+            <pre><code data-trim>
+                import React from 'react'
+
+                export default () => (
+                  <div>
+                    <h1>Welcome to the Game</h1>
+                  </div>
+                )
+            </code></pre>
+            <aside class="notes" data-markdown>
+                - **SS** Can you think of a way to make this pass?
+                - Yeah we can create a simple react component to spit an H1 on the page
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="failing-span">Failing test</span></h3>
+            <pre><code data-trim data-noescape>
+                When 'user starts the game' do
+                  visit('/')
+                  wait_for {
+                    focus_on(:welcome).text
+                    }.to eq('Welcome to the Game')
+
+                  <mark>focus_on(:welcome).start_game</mark>
+                end
+
+                Then 'the game commences' do
+                  pending "start game button doesn't start a game!"
+                  wait_for { focus_on(:game).round }.to eq('1')
+                end
+            </code></pre>
+            <aside class="notes" data-markdown>
+                - **SS** In the next part of the test we want to start the game
+                - "focus_on welcome to start_game" is a page fragment to click on the "start game" button
+                - The button? What button?
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="failing-span">Failing test</span></h3>
+            <div class="iterative-testing">
+                <img src="images/iteration-1.2-welcome.png" />
+            </div>
+            <aside class="notes" data-markdown>
+                - **MM** There is no button!
+                - No shit
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="passing-span">Make it pass</span></h3>
+            <div class="iterative-testing">
+                <img src="images/iteration-1.3-click-start.gif" width="400" />
+            </div>
+            <pre><code data-trim>
+                import React from 'react'
+                import { Link } from 'react-router-dom'
+
+                export default () => (
+                  <div>
+                    <h1>Welcome to the Game</h1>
+                    <Link to="/round/1">Start Game</Link>
+                  </div>
+                )
+            </code></pre>
+            <aside class="notes" data-markdown>
+                - **MM** Ok, lets create one
+                - Using react router, we're going to Link to the first round
+                - Should we write a test first?
+                - I dunno, we've got a room full of experts - should we ask them?
+                - Sure. Would anyone here ever drive this kind of code with an isolated unit test in React?
+                - ** see what happens **
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="failing-span">Failing test</span></h3>
+            <pre><code data-trim data-noescape>
+                When 'user starts the game' do
+                  visit('/')
+                  wait_for {
+                    focus_on(:welcome).text
+                  }.to eq('Welcome to the Game')
+
+                  focus_on(:welcome).start_game
+                end
+
+                Then 'the game commences' do
+                  <mark>wait_for { focus_on(:game).title }.to eq('Round 1')</mark>
+                end
+            </code></pre>
+            <aside class="notes" data-markdown>
+                - **MM** Ok, back on track. How do we know the game has commenced?
+                - We're on "round 1", it says it in the title
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="failing-span">Failing test</span></h3>
+            <div class="iterative-testing">
+                <img src="images/iteration-1.4-round-empty.png" />
+            </div>
+            <aside class="notes" data-markdown>
+                - **MM** And we get nothing
+                - How would we write the implementation to notify the user they're on round 1?
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="passing-span">Make it pass</span></h3>
+            <div class="iterative-testing">
+                <img src="images/iteration-1.5-navigate-to-round-1-text.gif" width="400" />
+            </div>
+            <pre><code data-trim>
+                ...
+                  this.state = { round: parseInt(props.match.params.round, 10) }
+                ...
+
+                render = () => (
+                  <div>
+                    <h1>Round <span className="round">{this.state.round}</span></h1>
+                    <Link to="/round/1">Start Game</Link>
+                  </div>
+                )
+            </code></pre>
+            <aside class="notes" data-markdown>
+                - **MM** Like this! Here is a Rounds component, it gets the React Router round parameter from the path and displays it
+                - Is this the way we should write this? Should we be doing something different with state maybe? Does anyone here know?
+                - Come grab us later to tell us
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="failing-span">Failing test</span></h3>
+            <pre><code data-trim data-noescape>
+                When 'user starts the game' do
+                  visit('/')
+                  wait_for {
+                    focus_on(:welcome).text
+                  }.to eq('Welcome to the Game')
+
+                  focus_on(:welcome).start_game
+                end
+
+                Then 'the game commences' do
+                  wait_for { focus_on(:game).round }.to eq('1')
+                  <mark>wait_for { focus_on(:game).images.count }.to eq(9)</mark>
+                end
+            </code></pre>
+            <aside class="notes" data-markdown>
+                - **SS** Back to our flow, the next thing we need is 9 images
+                - Images? what of those cute furry animals?
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="failing-span">Failing test</span></h3>
+            <div class="iterative-testing">
+                <img src="images/iteration-1.6-no-images.png" />
+            </div>
+            <aside class="notes" data-markdown>
+                - **SS** Yeah! But there are none
+                - Good! [pause] A failing test
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="passing-span">Make it pass</span></h3>
+            <div class="iterative-testing">
+                <img src="images/iteration-1.7-navigate-to-round-1-text-and-images.gif"  width="400" />
+            </div>
+            <pre><code data-trim>
+                <div className="images-container">
+                  API.fetchRoundData(round).then((data) => {
+                    this.setState(data)
+                ...
+                  { this.state.images.map( ({id, src}) => (
+                    <img key={id} src={src} alt="nice try"/>
+                  ))}
+                </div>
+            </code></pre>
+            <aside class="notes" data-markdown>
+                - **SS** In the next step, there's a bunch more code that happens
+                - Like API endpoints, controllers, models, serializers
+                - But you guys don't care, you're' react developers so here is a snippet of some JSX instead
+                - It's the bit that shows some images, fetched from our API
+            </aside>
+        </section>
+
+        <section>
+            <h3>Render images <span class="iteration-span">Iteration 1</span></h3>
+            <pre><code data-trim data-noescape style="max-height: 500px">
+                feature 'Game play lifecycle', js: true do
+                  context 'Game is setup with spooky terms' do
+                    before do
+                      ["paddy melon", "beaver"].each do |phrase|
+                        Term.create(phrase: phrase)
+                      end
+                    end
+
+                    scenario 'WINNING a game' do
+                      When 'user starts the game' do
+                        visit('/')
+                        wait_for {
+                          focus_on(:welcome).text
+                        }.to eq('Welcome to the Game')
+
+                        focus_on(:welcome).start_game
+                      end
+
+                      Then 'the game commences' do
+                        wait_for { focus_on(:game).round }.to eq('1')
+                        wait_for { focus_on(:game).images.count }.to eq('9')
+                      end
+                    end
+                  end
+                end
+            </code></pre>
+            <aside class="notes" data-markdown>
+                - **MM** Wrapping up iteration 1 we have just written
+                - We have a WHEN action on the system
+                - And THEN a measurable state showing the commencement of the game
+            </aside>
+        </section>
+
+        <section>
+            <h3>Submit a guess <span class="failing-span">Failing test</span></h3>
+            <div style="display: flex">
+            <pre><code data-trim data-noescape style="max-height: 500px">
+                When 'user starts the game' do
+                  visit('/')
+                  wait_for {
+                    focus_on(:welcome).text
+                  }.to eq('Welcome to the Game')
+
+                  focus_on(:welcome).start_game
+                end
+
+                Then 'the game commences' do
+                  wait_for { focus_on(:game).round }.to eq('1')
+                  <mark>wait_for { focus_on(:game).status }.to eq('IN-PROGRESS')</mark>
+                  wait_for { focus_on(:game).images.count }.to eq(9)
+                end
+            </code></pre>
+            </div>
+            <aside class="notes" data-markdown>
+                - **SS** Dealing with backend devs like us is a pain
+                - There is all this latency, network to and fro
+                - It's a great time for spinners
+                - Or in our case a state of LOADING and game IN-PROGRESS
+                - This is where page mechanics come in
+                - Not wanting to start the game each time, we just want to explore the mechanics
+                of the status component on this page
+            </aside>
+        </section>
+
+        <section>
+            <h3>Live Coding</h3>
+            <aside class="notes" data-markdown></aside>
+        </section>
+
+        <!-- # Play the game! -->
+        <section>
+            <h3>Let's play!</h3>
+            <div>Just cause we built it, lets play a game!</div>
+
+            <aside class="notes" data-markdown>
+                - **SS** What we've shown you you was just the first iteration of a single scenario
+                - We actually have a working game now.
+                - Aaaaand just cause we built it, let's play the game.
+                - Who wants to play?!
+            </aside>
+        </section>
+
+        <section>
+          <iframe src="https://search-term.herokuapp.com" width="600" height="600"></iframe>
+        </section>
+
+        <!-- # Thanks -->
+        <section>
+            <h3>Resources</h3>
+                <p><a href="https://failure-driven.com/">https://failure-driven.com/</a></p>
+                <p><a href="https://fresho.com/" class="fresho-logo"><img src="images/fresho_logo_green.svg"/><span>https://fresho.com/</span></a></p>
+            <div>
+                <a href="http://twitter.com/intent/user?screen_name=selenasmall88">
+                    <img class="twitter-avatar" src="images/avatar-selena.jpg" alt="selena-small"/>
+                    <span>@selenasmall88</span>
+                </a>
+            </div>
+            <div>
+                <a href="http://twitter.com/intent/user?screen_name=saramic">
+                    <img class="twitter-avatar" src="images/avatar-michael.jpg" alt="michael-milewski"/>
+                    <span>@saramic</span>
+                </a>
+            </div>
+
+            <aside class="notes" data-markdown>
+                - **SS** We have a blog. Go check it out: FailureDriven.com
+                - You will find links to the game, the code and this presentation
+                - Catch us on twitter
+                - Any react tips, tweet them at us
+                - Or come over and give us 5 minutes, we've got a million questions
+                - Thanks everyone!
+            </aside>
+        </section>
+    </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+  // More info about config & dependencies:
+  // - https://github.com/hakimel/reveal.js#configuration
+  // - https://github.com/hakimel/reveal.js#dependencies
+  Reveal.initialize({
+    dependencies: [
+      { src: 'plugin/markdown/marked.js' },
+      { src: 'plugin/markdown/markdown.js' },
+      { src: 'plugin/notes/notes.js', async: true },
+      { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+    ],
+    transition: 'none',
+    history: true,
+  });
+</script>
+</body>
 </html>
